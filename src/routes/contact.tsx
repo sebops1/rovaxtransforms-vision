@@ -59,19 +59,21 @@ type Errors = Partial<Record<keyof ConsultationInput, string>>;
 
 function Contact() {
   const send = useServerFn(submitConsultation);
-  const [values, setValues] = useState<ConsultationInput>(emptyForm);
+  // Fields are uncontrolled: anything a visitor types before the page finishes
+  // loading stays in the DOM instead of being wiped by hydration.
   const [errors, setErrors] = useState<Errors>({});
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [reference, setReference] = useState<string | null>(null);
 
-  const set = (key: keyof ConsultationInput) => (value: string) => {
-    setValues((v) => ({ ...v, [key]: value }));
-    setErrors((e) => ({ ...e, [key]: undefined }));
+  const clear = (key: keyof ConsultationInput) => {
+    setErrors((e) => (e[key] ? { ...e, [key]: undefined } : e));
   };
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const parsed = consultationSchema.safeParse(values);
+    const form = event.currentTarget;
+    const raw = Object.fromEntries(new FormData(form).entries());
+    const parsed = consultationSchema.safeParse(raw);
     if (!parsed.success) {
       const next: Errors = {};
       for (const issue of parsed.error.issues) {
@@ -88,7 +90,7 @@ function Contact() {
       const result = await send({ data: parsed.data });
       setReference(result.reference);
       setStatus("success");
-      setValues(emptyForm);
+      form.reset();
     } catch (error) {
       console.error(error);
       setStatus("error");
@@ -137,33 +139,30 @@ function Contact() {
                   </div>
 
                   <div className="grid gap-5 sm:grid-cols-2">
-                    <Field label="Full name" name="fullName" value={values.fullName} onChange={set("fullName")} error={errors.fullName} autoComplete="name" />
-                    <Field label="Organization" name="organization" value={values.organization} onChange={set("organization")} error={errors.organization} autoComplete="organization" />
-                    <Field label="Job title" name="jobTitle" value={values.jobTitle} onChange={set("jobTitle")} error={errors.jobTitle} autoComplete="organization-title" />
-                    <Field label="Business email" name="email" type="email" value={values.email} onChange={set("email")} error={errors.email} autoComplete="email" />
-                    <Field label="Phone" name="phone" type="tel" value={values.phone} onChange={set("phone")} error={errors.phone} autoComplete="tel" />
-                    <Field label="Country" name="country" value={values.country} onChange={set("country")} error={errors.country} autoComplete="country-name" />
+                    <Field label="Full name" name="fullName" onChange={() => clear("fullName")} error={errors.fullName} autoComplete="name" />
+                    <Field label="Organization" name="organization" onChange={() => clear("organization")} error={errors.organization} autoComplete="organization" />
+                    <Field label="Job title" name="jobTitle" onChange={() => clear("jobTitle")} error={errors.jobTitle} autoComplete="organization-title" />
+                    <Field label="Business email" name="email" type="email" onChange={() => clear("email")} error={errors.email} autoComplete="email" />
+                    <Field label="Phone" name="phone" type="tel" onChange={() => clear("phone")} error={errors.phone} autoComplete="tel" />
+                    <Field label="Country" name="country" onChange={() => clear("country")} error={errors.country} autoComplete="country-name" />
                     <SelectField
                       label="Industry"
                       name="industry"
-                      value={values.industry}
-                      onChange={set("industry")}
+                      onChange={() => clear("industry")}
                       error={errors.industry}
                       options={industries.map((i) => i.name)}
                     />
                     <SelectField
                       label="Solution interested in"
                       name="solution"
-                      value={values.solution}
-                      onChange={set("solution")}
+                      onChange={() => clear("solution")}
                       error={errors.solution}
                       options={solutionInterestOptions}
                     />
                     <SelectField
                       label="Estimated project timeline"
                       name="timeline"
-                      value={values.timeline}
-                      onChange={set("timeline")}
+                      onChange={() => clear("timeline")}
                       error={errors.timeline}
                       options={timelines}
                       className="sm:col-span-2"
@@ -178,8 +177,7 @@ function Contact() {
                       id="description"
                       name="description"
                       rows={6}
-                      value={values.description}
-                      onChange={(e) => set("description")(e.target.value)}
+                      onChange={() => clear("description")}
                       aria-invalid={Boolean(errors.description)}
                       aria-describedby={errors.description ? "description-error" : undefined}
                       className="mt-2 w-full rounded-xl border border-input bg-surface px-4 py-3 text-sm outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-electric"
@@ -279,7 +277,6 @@ function Contact() {
 function Field({
   label,
   name,
-  value,
   onChange,
   error,
   type = "text",
@@ -287,9 +284,8 @@ function Field({
 }: {
   label: string;
   name: string;
-  value: string;
-  onChange: (v: string) => void;
-  error?: string;
+  onChange: () => void;
+  error?: string | undefined;
   type?: string;
   autoComplete?: string;
 }) {
@@ -302,9 +298,9 @@ function Field({
         id={name}
         name={name}
         type={type}
-        value={value}
+        defaultValue=""
         autoComplete={autoComplete}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={onChange}
         aria-invalid={Boolean(error)}
         aria-describedby={error ? `${name}-error` : undefined}
         className="mt-2 w-full rounded-xl border border-input bg-surface px-4 py-3 text-sm outline-none transition-colors focus:border-electric"
@@ -321,7 +317,6 @@ function Field({
 function SelectField({
   label,
   name,
-  value,
   onChange,
   error,
   options,
@@ -329,11 +324,10 @@ function SelectField({
 }: {
   label: string;
   name: string;
-  value: string;
-  onChange: (v: string) => void;
-  error?: string;
+  onChange: () => void;
+  error?: string | undefined;
   options: string[];
-  className?: string;
+  className?: string | undefined;
 }) {
   return (
     <div className={className}>
@@ -343,8 +337,8 @@ function SelectField({
       <select
         id={name}
         name={name}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
+        defaultValue=""
+        onChange={onChange}
         aria-invalid={Boolean(error)}
         aria-describedby={error ? `${name}-error` : undefined}
         className="mt-2 w-full appearance-none rounded-xl border border-input bg-surface px-4 py-3 text-sm outline-none transition-colors focus:border-electric"

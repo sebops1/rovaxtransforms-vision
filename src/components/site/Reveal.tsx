@@ -11,15 +11,16 @@ type RevealProps = {
 /** Fades and lifts content into view once, using IntersectionObserver. */
 export function Reveal({ children, className, delay = 0, as: Tag = "div" }: RevealProps) {
   const ref = useRef<HTMLElement | null>(null);
-  const [revealed, setRevealed] = useState(false);
+  // Server render and pre-hydration show content immediately; only sections
+  // still below the viewport after mount are hidden until scrolled into view.
+  const [revealed, setRevealed] = useState(true);
 
   useEffect(() => {
     const node = ref.current;
-    if (!node) return;
-    if (typeof IntersectionObserver === "undefined") {
-      setRevealed(true);
-      return;
-    }
+    if (!node || typeof IntersectionObserver === "undefined") return;
+    const rect = node.getBoundingClientRect();
+    if (rect.top < window.innerHeight * 0.9) return;
+    setRevealed(false);
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
