@@ -11,8 +11,12 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as InsightsRouteImport } from './routes/insights'
 import { Route as PartnersRouteImport } from './routes/partners'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as IndustriesIndexRouteImport } from './routes/industries.index'
 import { Route as IndustriesSlugRouteImport } from './routes/industries.$slug'
 import { Route as SolutionsIndexRouteImport } from './routes/solutions.index'
@@ -28,6 +32,16 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CookiesRoute = CookiesRouteImport.update({
+  id: '/cookies',
+  path: '/cookies',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const InsightsRoute = InsightsRouteImport.update({
   id: '/insights',
   path: '/insights',
@@ -36,6 +50,16 @@ const InsightsRoute = InsightsRouteImport.update({
 const PartnersRoute = PartnersRouteImport.update({
   id: '/partners',
   path: '/partners',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndustriesIndexRoute = IndustriesIndexRouteImport.update({
@@ -62,8 +86,12 @@ const SolutionsSlugRoute = SolutionsSlugRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/contact': typeof ContactRoute
+  '/cookies': typeof CookiesRoute
   '/insights': typeof InsightsRoute
   '/partners': typeof PartnersRoute
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/industries/$slug': typeof IndustriesSlugRoute
   '/solutions/$slug': typeof SolutionsSlugRoute
   '/industries/': typeof IndustriesIndexRoute
@@ -72,8 +100,12 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/contact': typeof ContactRoute
+  '/cookies': typeof CookiesRoute
   '/insights': typeof InsightsRoute
   '/partners': typeof PartnersRoute
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/industries/$slug': typeof IndustriesSlugRoute
   '/solutions/$slug': typeof SolutionsSlugRoute
   '/industries': typeof IndustriesIndexRoute
@@ -83,8 +115,12 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/contact': typeof ContactRoute
+  '/cookies': typeof CookiesRoute
   '/insights': typeof InsightsRoute
   '/partners': typeof PartnersRoute
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/industries/$slug': typeof IndustriesSlugRoute
   '/solutions/$slug': typeof SolutionsSlugRoute
   '/industries/': typeof IndustriesIndexRoute
@@ -95,8 +131,12 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/contact'
+    | '/cookies'
     | '/insights'
     | '/partners'
+    | '/privacy'
+    | '/terms'
     | '/industries/$slug'
     | '/solutions/$slug'
     | '/industries/'
@@ -105,8 +145,12 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/contact'
+    | '/cookies'
     | '/insights'
     | '/partners'
+    | '/privacy'
+    | '/terms'
     | '/industries/$slug'
     | '/solutions/$slug'
     | '/industries'
@@ -115,8 +159,12 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
+    | '/contact'
+    | '/cookies'
     | '/insights'
     | '/partners'
+    | '/privacy'
+    | '/terms'
     | '/industries/$slug'
     | '/solutions/$slug'
     | '/industries/'
@@ -126,8 +174,12 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  ContactRoute: typeof ContactRoute
+  CookiesRoute: typeof CookiesRoute
   InsightsRoute: typeof InsightsRoute
   PartnersRoute: typeof PartnersRoute
+  PrivacyRoute: typeof PrivacyRoute
+  TermsRoute: typeof TermsRoute
   IndustriesSlugRoute: typeof IndustriesSlugRoute
   SolutionsSlugRoute: typeof SolutionsSlugRoute
   IndustriesIndexRoute: typeof IndustriesIndexRoute
@@ -150,6 +202,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cookies': {
+      id: '/cookies'
+      path: '/cookies'
+      fullPath: '/cookies'
+      preLoaderRoute: typeof CookiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/insights': {
       id: '/insights'
       path: '/insights'
@@ -162,6 +228,20 @@ declare module '@tanstack/react-router' {
       path: '/partners'
       fullPath: '/partners'
       preLoaderRoute: typeof PartnersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/industries/': {
@@ -198,8 +278,12 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  ContactRoute: ContactRoute,
+  CookiesRoute: CookiesRoute,
   InsightsRoute: InsightsRoute,
   PartnersRoute: PartnersRoute,
+  PrivacyRoute: PrivacyRoute,
+  TermsRoute: TermsRoute,
   IndustriesSlugRoute: IndustriesSlugRoute,
   SolutionsSlugRoute: SolutionsSlugRoute,
   IndustriesIndexRoute: IndustriesIndexRoute,
