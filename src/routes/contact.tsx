@@ -42,19 +42,6 @@ const timelines = [
   "Not yet determined",
 ];
 
-const emptyForm: ConsultationInput = {
-  fullName: "",
-  organization: "",
-  jobTitle: "",
-  email: "",
-  phone: "",
-  country: "",
-  industry: "",
-  solution: "",
-  timeline: "",
-  description: "",
-};
-
 type Errors = Partial<Record<keyof ConsultationInput, string>>;
 
 function Contact() {
